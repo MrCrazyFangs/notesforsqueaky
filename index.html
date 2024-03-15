@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App</title>
+    <style>
+        #noteContainer {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        #noteText {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .note {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        .deleteButton {
+            float: right;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="noteContainer">
+        <h1>For squeaky and me</h1>
+        <p>But you can use it too, I guess. However, this will only be up for like 2 weeks, so lol.</p>
+        <h2>Notes</h2>
+        <input type="text" id="noteText" placeholder="Type your note here...">
+        <button onclick="saveNote()">Save Note</button>
+        <div id="savedNotes"></div>
+    </div>
+
+    <script>
+        function saveNote() {
+            var note = document.getElementById("noteText").value;
+            if (note.trim() !== "") {
+                var notes = localStorage.getItem("notes") ? JSON.parse(localStorage.getItem("notes")) : [];
+                notes.push(note);
+                localStorage.setItem("notes", JSON.stringify(notes));
+                displayNotes();
+                document.getElementById("noteText").value = "";
+            }
+        }
+
+        function displayNotes() {
+            var notes = localStorage.getItem("notes") ? JSON.parse(localStorage.getItem("notes")) : [];
+            var notesContainer = document.getElementById("savedNotes");
+            notesContainer.innerHTML = "";
+            notes.forEach(function(note, index) {
+                var noteDiv = document.createElement("div");
+                noteDiv.classList.add("note");
+                noteDiv.textContent = note;
+                var deleteButton = document.createElement("span");
+                deleteButton.classList.add("deleteButton");
+                deleteButton.innerHTML = "&times;";
+                deleteButton.onclick = function() {
+                    deleteNote(index);
+                };
+                noteDiv.appendChild(deleteButton);
+                notesContainer.appendChild(noteDiv);
+            });
+        }
+
+        function deleteNote(index) {
+            var notes = JSON.parse(localStorage.getItem("notes"));
+            notes.splice(index, 1);
+            localStorage.setItem("notes", JSON.stringify(notes));
+            displayNotes();
+        }
+
+        displayNotes();
+    </script>
+</body>
+</html>
